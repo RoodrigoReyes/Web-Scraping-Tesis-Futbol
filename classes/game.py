@@ -1,6 +1,7 @@
-from audioop import add
 import re
+import time
 import pickle
+import random
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -11,11 +12,17 @@ class Game():
             executable_path='web_driver/chromedriver.exe')
 
     def get_web(self, link):
+        time.sleep(random.randint(10, 25))
+        
         return self.driver.get(link)
+
+    def get_cookies(self):
+        return pickle.dump(
+            self.driver.get_cookies(), open("cookies/ceroacero_cookies_login.pkl", "wb"))
 
     def add_cookies(self):
         cookies = pickle.load(
-            open("cookies/ceroacero_cookies.pkl", "rb"))
+            open("cookies/ceroacero_cookies_login.pkl", "rb"))
 
         for cookie in cookies:
             self.driver.add_cookie(cookie)
@@ -25,7 +32,7 @@ class Game():
     def games_links(self):
 
         links = self.driver.find_elements(By.CLASS_NAME, "result > a")
-        links = links[:len(links)//2]
+
         links = [link.get_attribute("href") for link in links]
 
         return links
@@ -37,10 +44,11 @@ class Game():
 
         # Obtener fecha del Partido
         dates_games = []
-        for game in dates:
-            if bool(re.match(r"[\d][\d]", game)):
-                date_game = game[:5]
-                game = game[6:]
+        # Obtener Resultados de los Partidos
+        for date_game in dates:
+            if bool(re.match(r"[\d][\d]", date_game)):
+                date_game = date_game[:5]
+                date_game = date_game[6:]
 
                 dates_games.append(date_game)
             else:
@@ -48,10 +56,13 @@ class Game():
 
         return dates_games
 
-    def get_jornadas(self):
+    def get_jornadas(self, year=2020):
+        if year==2021:
+            return len(self.driver.find_elements(
+                By.XPATH, '//*[@id="page_submenu"]/ul/li[3]/form/div[2]/label/select/option'))-1
 
         return len(self.driver.find_elements(
-            By.XPATH, '//*[@id="page_submenu"]/ul/li[1]/form/div[2]/label/select/option'))-1
+                By.XPATH, '//*[@id="page_submenu"]/ul/li[1]/form/div[2]/label/select/option'))-1
 
     def game_stats(self):
 
