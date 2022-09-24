@@ -53,7 +53,7 @@ class Game():
 
                 # Nombres de los equipos
                 teams_score = game.split('-')
-                if len(teams_score)<2:
+                if len(teams_score) < 2:
                     teams_score = game.split(' DA ')
 
                 # print(teams_score)
@@ -65,13 +65,13 @@ class Game():
                 score_away = re.findall(r'\d+', teams_score[1])[0]
 
                 games_date.append([jornada, date_game, name_local,
-                                    name_away, int(score_local), int(score_away), link])
+                                   name_away, int(score_local), int(score_away), link])
             else:
                 # Nombres de los equipos
                 teams_score = game.split('-')
-                if len(teams_score)<2:
+                if len(teams_score) < 2:
                     teams_score = game.replace(' DA ', ' 3-0 ').split('-')
-                    
+
                 # print(teams_score)
                 name_local = ' '.join(teams_score[0].split()[:-1])
                 name_away = ' '.join(teams_score[1].split()[1:-1])
@@ -81,7 +81,7 @@ class Game():
                 score_away = re.findall(r'\d+', teams_score[1])[0]
 
                 games_date.append([jornada, date_game, name_local,
-                                    name_away, int(score_local), int(score_away), link])
+                                   name_away, int(score_local), int(score_away), link])
 
         return games_date
 
@@ -95,10 +95,19 @@ class Game():
 
     def game_stats(self):
 
-        stats = self.driver.find_element(
-            By.XPATH, '//*[@id="page_rightbar"]/div[3]/div/div[2]')
-        all_stats = stats.text.split('\n')
-        all_stats = [stats.strip(' ') for stats in all_stats]
-        all_stats = [all_stats[i:i+3] for i in range(0, len(all_stats), 3)]
+        try:
+            stats = self.driver.find_element(
+                By.XPATH, '//*[@id="page_rightbar"]/div[3]/div/div[2]')
 
-        return all_stats
+            all_stats = stats.text.split('\n')
+            all_stats = [stats.strip(' ') for stats in all_stats]
+            all_stats = {all_stats[i]: all_stats[i+1:i+3]
+                         for i in range(0, len(all_stats), 3)}
+
+            return all_stats
+
+        except:
+
+            all_stats = {}
+
+            return all_stats
