@@ -2,7 +2,6 @@ import re
 import time
 import pickle
 import random
-from classes.links import dummy_links
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
