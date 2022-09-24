@@ -5,7 +5,6 @@ import random
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-
 class Game():
     def __init__(self):
         self.driver = webdriver.Chrome(
@@ -93,20 +92,16 @@ class Game():
             By.XPATH, '//*[@id="page_submenu"]/ul/li[1]/form/div[2]/label/select/option'))-1
 
     def game_stats(self):
-
         try:
             stats = self.driver.find_element(
                 By.XPATH, '//*[@id="page_rightbar"]/div[3]/div/div[2]')
 
             all_stats = stats.text.split('\n')
             all_stats = [stats.strip(' ') for stats in all_stats]
-            all_stats = {all_stats[i]: all_stats[i+1:i+3]
-                         for i in range(0, len(all_stats), 3)}
+            all_stats = {all_stats[i]: all_stats[i+1:i+3] for i in range(0, len(all_stats), 3)}
 
             return all_stats
 
         except:
-
             all_stats = {}
-
             return all_stats
