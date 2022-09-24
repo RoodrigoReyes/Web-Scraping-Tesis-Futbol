@@ -2,6 +2,7 @@ import re
 import time
 import pickle
 import random
+from classes.links import dummy_links
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -12,15 +13,19 @@ class Game():
             executable_path='web_driver/chromedriver.exe')
 
     def get_web(self, link):
-        time.sleep(random.randint(10, 25))
-        
+
+        # self.driver.get(random.choice(dummy_links))
+        time.sleep(random.randint(5, 15))
+
         return self.driver.get(link)
 
     def get_cookies(self):
+
         return pickle.dump(
             self.driver.get_cookies(), open("cookies/ceroacero_cookies_login.pkl", "wb"))
 
     def add_cookies(self):
+
         cookies = pickle.load(
             open("cookies/ceroacero_cookies_login.pkl", "rb"))
 
@@ -29,40 +34,64 @@ class Game():
 
         self.driver.refresh()
 
-    def games_links(self):
+    def dates_games(self, jornada):
 
-        links = self.driver.find_elements(By.CLASS_NAME, "result > a")
+        # Partidos con fecha y resultado
+        results = self.driver.find_element(By.CLASS_NAME, "box_container")
+        results = list(map(str.strip, results.text.split("\n")))
 
-        links = [link.get_attribute("href") for link in links]
+        # Links de las estadisiticas de todos los partidos por jornada
+        games_links = self.driver.find_elements(By.CLASS_NAME, "result > a")
+        games_links = [link.get_attribute("href") for link in games_links]
 
-        return links
+        # Obtener Datos de los Partidos: Fecha - Equipo Local - Equipo Visitante - Goles Locales - Goles Visitante
+        games_date = []
+        for game, link in zip(results, games_links):
+            if bool(re.match(r"[\d][\d]", game)):
+                date_game = game[:5]
+                game = game[6:]
 
-    def dates_games(self):
+                # Nombres de los equipos
+                teams_score = game.split('-')
+                if len(teams_score)<2:
+                    teams_score = game.split(' DA ')
 
-        dates = self.driver.find_element(By.CLASS_NAME, "box_container")
-        dates = list(map(str.strip, dates.text.split("\n")))
+                # print(teams_score)
+                name_local = ' '.join(teams_score[0].split()[:-1])
+                name_away = ' '.join(teams_score[1].split()[1:-1])
 
-        # Obtener fecha del Partido
-        dates_games = []
-        # Obtener Resultados de los Partidos
-        for date_game in dates:
-            if bool(re.match(r"[\d][\d]", date_game)):
-                date_game = date_game[:5]
-                date_game = date_game[6:]
+                # Resultados
+                score_local = re.findall(r'\d+', teams_score[0])[0]
+                score_away = re.findall(r'\d+', teams_score[1])[0]
 
-                dates_games.append(date_game)
+                games_date.append([jornada, date_game, name_local,
+                                    name_away, int(score_local), int(score_away), link])
             else:
-                dates_games.append(date_game)
+                # Nombres de los equipos
+                teams_score = game.split('-')
+                if len(teams_score)<2:
+                    teams_score = game.replace(' DA ', ' 3-0 ').split('-')
+                    
+                # print(teams_score)
+                name_local = ' '.join(teams_score[0].split()[:-1])
+                name_away = ' '.join(teams_score[1].split()[1:-1])
 
-        return dates_games
+                # Resultados
+                score_local = re.findall(r'\d+', teams_score[0])[0]
+                score_away = re.findall(r'\d+', teams_score[1])[0]
+
+                games_date.append([jornada, date_game, name_local,
+                                    name_away, int(score_local), int(score_away), link])
+
+        return games_date
 
     def get_jornadas(self, year=2020):
-        if year==2021:
+        if year == 2021:
             return len(self.driver.find_elements(
                 By.XPATH, '//*[@id="page_submenu"]/ul/li[3]/form/div[2]/label/select/option'))-1
 
         return len(self.driver.find_elements(
-                By.XPATH, '//*[@id="page_submenu"]/ul/li[1]/form/div[2]/label/select/option'))-1
+            By.XPATH, '//*[@id="page_submenu"]/ul/li[1]/form/div[2]/label/select/option'))-1
 
     def game_stats(self):
 
