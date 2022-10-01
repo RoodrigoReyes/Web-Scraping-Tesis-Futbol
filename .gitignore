@@ -2,3 +2,4 @@ venv/
 cookies/
 web_driver/
 data/**/*.xlsx
+data/backup/
