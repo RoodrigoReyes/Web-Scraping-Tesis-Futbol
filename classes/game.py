@@ -5,6 +5,7 @@ import random
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+
 class Game():
     def __init__(self):
         self.driver = webdriver.Chrome(
@@ -98,7 +99,8 @@ class Game():
 
             all_stats = stats.text.split('\n')
             all_stats = [stats.strip(' ') for stats in all_stats]
-            all_stats = {all_stats[i]: all_stats[i+1:i+3] for i in range(0, len(all_stats), 3)}
+            all_stats = {all_stats[i]: all_stats[i+1:i+3]
+                         for i in range(0, len(all_stats), 3)}
 
             return all_stats
 
