@@ -1,7 +1,8 @@
+* Jugador: Nombre y Apellido del jugador
 * P: Posición
 * M: Minutos
 * V: Goles
-* PP: Propia Puerta
+* AG: Propia Puerta
 * AST: Asistencias
 * A: Tarjetas Amarillas
 * R: Tarjetas Rojas
@@ -10,12 +11,17 @@
 * PF: Penalti fallado
 * D: Tiros
 * DP: Remates a puerta
-* D: Total de entradas
+* D1: Total de entradas
 * DS: Entradas exitosas
 * Rob: Robos
-* P: Total de pases
+* P1: Total de pases
 * PC: Pases acertados
-* %PC: Porcentaje de pases buenos
-* D: Paradas
+* PPC: Porcentaje de pases buenos
+* D2: Paradas
 * FC: Faltas Cometidas
 * FS: Faltas Sufridas
+* Equipo: Nombre del equipo al que pertenece el jugador
+* Siglas: Siglas del equipo de futbol
+* Jornada: Número de la Jornada de los partidos
+* Anio: Año de los partidos
+* Game: Nombre los equipos
