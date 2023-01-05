@@ -3,7 +3,6 @@ cookies/
 web_driver/
 data/**/*.xlsx
 data/backup/
-notebooks/
 __pycache__/
 
 *.parquet
